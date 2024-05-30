@@ -52,11 +52,15 @@
                 @endforeach
 
                 <div class="flex mt-1">
-                    <button type="submit" id="next-button" class="font-bold text-1xl bg-red-700 text-white px-10 py-4 rounded-md hover:bg-red-950 mr-5 shadow shadow-black">Next</button>
+                    <button type="submit" id="next-button" class="font-bold text-1xl bg-red-700 text-white px-10 py-4 rounded-md hover:bg-red-950 mr-5 shadow shadow-black"  @auth disabled @endauth>Next</button>
                 </div>
-                <div class="flex mt-8 md:pt-5">
-                    <p class="font-bold text-white">
-                        You can book a maximum of 5 tickets for each category. If you want to book a group visit, create an account!
+                <div class="flex mt-5 md:pt-5">
+                    <p class="font-bold text-white text-2xl">
+                        @auth
+                            Book your ticket using "Book now" in your account drop-down panel!
+                        @else
+                            You can book a maximum of 5 tickets for each category. If you want to book a group visit, create an account!
+                        @endauth
                     </p>
                 </div>
             </form>

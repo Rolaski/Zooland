@@ -17,6 +17,7 @@ use App\Http\Controllers\UserTicketController;
 use App\Http\Controllers\AdminStatisticController;
 
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\UserMiddleware;
 
 
 
@@ -36,10 +37,17 @@ Route::post('/reservation', [CalendarController::class, 'reserve'])->name('reser
 Route::post('/guest-reservation', [GuestReservationController::class, 'submit'])->name('guest.reservation.submit');
 
 // Route for user reservation
-Route::get('/user-reservation', [UserReservationController::class, 'index'])->name('user-reservation');
-Route::get('/user-reservations', [UserReservationController::class, 'userReservations'])->name('user.reservations');
-Route::post('/user-reservation', [UserReservationController::class, 'reserve'])->name('user-reservation.reserve');
+Route::middleware(['auth'])->group(function () {
+    Route::middleware([UserMiddleware::class])->group(function () {
+        Route::get('/user-reservation', [UserReservationController::class, 'index'])->name('user-reservation');
+        Route::get('/user-reservations', [UserReservationController::class, 'userReservations'])->name('user.reservations');
+        Route::post('/user-reservation', [UserReservationController::class, 'reserve'])->name('user-reservation.reserve');
 
+        //settings like update password, avatar etc
+        Route::get('/settings', [ProfileController::class, 'show'])->name('settings');
+        Route::post('/settings', [ProfileController::class, 'update'])->name('settings.update');
+    });
+});
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
@@ -50,10 +58,6 @@ Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->na
 
 // Route for handling user registration
 Route::post('/register', [RegisterController::class, 'register']);
-
-
-Route::get('/settings', [ProfileController::class, 'show'])->name('settings');
-Route::post('/settings', [ProfileController::class, 'update'])->name('settings.update');
 
 
 Route::middleware(['auth'])->group(function () {

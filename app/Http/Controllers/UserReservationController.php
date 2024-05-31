@@ -8,59 +8,42 @@ use App\Models\User;
 use App\Models\Reservation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use Carbon\Carbon;
 
 class UserReservationController extends Controller
 {
     public function index()
     {
-        // Pobieramy bilety z bazy danych
         $tickets = Ticket::all();
-
-        // Zwracamy widok rezerwacji użytkownika wraz z przekazanymi danymi
         return view('reservation.user', compact('tickets'));
     }
 
     public function userReservations()
     {
-               // Pobierz zalogowanego użytkownika
-               $user = Auth::user();
-
-               // Sprawdź, czy użytkownik jest zalogowany
-               if ($user) {
-                   // Pobierz rezerwacje dla użytkownika
-                   $userReservations = $user->reservations;
-
-                   // Zwróć widok z przekazanymi danymi
-                   return view('reservation.user_show', compact('userReservations'));
-               } else {
-                   // Przekieruj użytkownika na stronę logowania lub inny widok
-                   return redirect()->route('login');
-               }
-
-    // Zwróć widok z przekazanymi danymi
-    return view('reservation.user_show', compact('userReservations'));
+        $user = Auth::user();
+        if ($user) {
+            $userReservations = $user->reservations;
+            return view('reservation.user_show', compact('userReservations'));
+        } else {
+            return redirect()->route('login');
+        }
     }
 
     public function reserve(Request $request)
     {
-        // Walidacja danych formularza
         $request->validate([
             'visit-date' => 'required|date',
             'quantity' => 'required|array',
             'quantity.*' => 'integer|min:0',
         ]);
 
-        // Tworzenie nowej rezerwacji
         $reservation = new Reservation();
-        $reservation->user_id = Auth::id(); // ID zalogowanego użytkownika
+        $reservation->user_id = Auth::id();
         $reservation->reservation_date = $request->input('visit-date');
         $reservation->save();
 
-        // Dodawanie biletów do rezerwacji
         foreach ($request->input('quantity') as $ticketId => $quantity) {
             if ($quantity > 0) {
-                // Zapisuje do tabeli łączącej 'ticket_user'
                 DB::table('ticket_user')->insert([
                     'reservation_id' => $reservation->id,
                     'ticket_id' => $ticketId,
@@ -71,8 +54,29 @@ class UserReservationController extends Controller
             }
         }
 
-        // Przekierowanie po udanej rezerwacji
         return redirect()->route('user-reservation')->with('status', 'Reservation successful!');
     }
 
+    public function destroy($id)
+    {
+        $reservation = Reservation::find($id);
+        if (!$reservation || $reservation->user_id != Auth::id()) {
+            return redirect()->route('user.reservations')->withErrors('Reservation not found or you do not have permission to delete it.');
+        }
+
+        $today = Carbon::now();
+        $reservationDate = Carbon::parse($reservation->reservation_date);
+        $daysUntilReservation = $today->diffInDays($reservationDate, false);
+
+        if ($daysUntilReservation < 0) {
+            return redirect()->route('user.reservations')->withErrors('You cannot delete past reservations.');
+        }
+
+        if ($daysUntilReservation < 7) {
+            return redirect()->route('user.reservations')->withErrors('You cannot delete reservations within 7 days of the reservation date.');
+        }
+
+        $reservation->delete();
+        return redirect()->route('user.reservations')->with('status', 'Reservation deleted successfully.');
+    }
 }

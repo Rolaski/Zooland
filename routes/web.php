@@ -42,8 +42,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/user-reservation', [UserReservationController::class, 'index'])->name('user-reservation');
         Route::get('/user-reservations', [UserReservationController::class, 'userReservations'])->name('user.reservations');
         Route::post('/user-reservation', [UserReservationController::class, 'reserve'])->name('user-reservation.reserve');
+        Route::delete('/user-reservation/{id}', [UserReservationController::class, 'destroy'])->name('user-reservation.destroy');
 
-        //settings like update password, avatar etc
         Route::get('/settings', [ProfileController::class, 'show'])->name('settings');
         Route::post('/settings', [ProfileController::class, 'update'])->name('settings.update');
     });

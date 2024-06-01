@@ -35,7 +35,12 @@
                                         <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
                                     </svg>
                                 </div>
-                                <input type="date" id="visit-date" name="visit-date" class="mt-1 block w-full p-2 pl-8 border-2 border-black rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-green-50" min="{{ date('Y-m-d') }}" max="{{ now()->addMonths(3)->toDateString() }}">
+                                <input type="date" id="visit-date" name="visit-date"
+                                class="mt-1 block w-full p-2 pl-8 border-2 border-black rounded-md shadow-sm
+                                focus:ring-yellow-600 focus:border-yellow-600
+                                sm:text-sm bg-green-50"
+                                min="{{ date('Y-m-d', strtotime('+1 day')) }}"
+                                max="{{ now()->addMonths(3)->toDateString() }}">
                             </div>
                         </div>
                         @foreach($tickets as $ticket)

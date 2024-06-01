@@ -8,12 +8,10 @@
             <form id="reservation-form" method="POST" action="{{ route('reservation.submit') }}">
                 @csrf
                 @if ($errors->any())
-                    <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
-                        <ul class="list-disc pl-5">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
+                    <div class="p-4 mt-3 mb-4 text-3xl text-red-600 rounded-lg bg-lime-950 dark:bg-lime-950 dark:text-red-600 font-extrabold" role="alert">
+                        @foreach ($errors->all() as $error)
+                            {{ $error }}<br>
+                        @endforeach
                     </div>
                 @endif
                 @if(session('status'))
@@ -29,7 +27,12 @@
                                 <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
                             </svg>
                         </div>
-                        <input type="date" id="visit-date" name="visit-date" class="mt-1 block w-full p-2 pl-8 border-2 border-black rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-green-50" min="{{ date('Y-m-d') }}" max="{{ date('Y-m-d', strtotime('+3 months')) }}">
+                        <input type="date" id="visit-date" name="visit-date"
+                        class="mt-1 block w-full p-2 pl-8 border-2 border-black rounded-md shadow-sm
+                        focus:ring-yellow-600 focus:border-yellow-600
+                        sm:text-sm bg-green-50"
+                        min="{{ date('Y-m-d', strtotime('+1 day')) }}"
+                        max="{{ date('Y-m-d', strtotime('+3 months')) }}">
                     </div>
                 </div>
                 @foreach($tickets as $ticket)
@@ -73,24 +76,3 @@
     </div>
 </div>
 
-<script>
-    document.getElementById('reservation-form').addEventListener('submit', function(event) {
-        let selectedTickets = {};
-        let ticketSelected = false;
-
-        @foreach($tickets as $ticket)
-        let quantity{{ $ticket->id }} = document.getElementById('quantity-{{ $ticket->id }}').value;
-        selectedTickets['{{ $ticket->type }}'] = quantity{{ $ticket->id }};
-        if (quantity{{ $ticket->id }} > 0) {
-            ticketSelected = true;
-        }
-        @endforeach
-
-        if (!ticketSelected) {
-            event.preventDefault();
-            alert('Please select at least one ticket.');
-        } else {
-            console.log(selectedTickets); // Możesz zapisać to do lokalnego magazynu lub przesłać do serwera
-        }
-    });
-</script>

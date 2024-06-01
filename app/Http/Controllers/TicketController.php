@@ -7,33 +7,13 @@ use Illuminate\Http\Request;
 
 class TicketController extends Controller
 {
-    /**
-     * Display a listing of the tickets.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         $tickets = Ticket::all();
         return view('admin.ticketCRUD', compact('tickets'));
     }
 
-    /**
-     * Show the form for creating a new ticket.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        return view('admin.create');
-    }
-
-    /**
-     * Store a newly created ticket in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -47,24 +27,6 @@ class TicketController extends Controller
         return redirect()->route('admin.tickets')->with('success', 'Ticket created successfully.');
     }
 
-    /**
-     * Show the form for editing the specified ticket.
-     *
-     * @param  \App\Models\Ticket  $ticket
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Ticket $ticket)
-    {
-        return view('admin.edit', compact('ticket'));
-    }
-
-    /**
-     * Update the specified ticket in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Ticket  $ticket
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Ticket $ticket)
     {
         $request->validate([
@@ -78,12 +40,6 @@ class TicketController extends Controller
         return redirect()->route('admin.tickets')->with('success', 'Ticket updated successfully.');
     }
 
-    /**
-     * Remove the specified ticket from storage.
-     *
-     * @param  \App\Models\Ticket  $ticket
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Ticket $ticket)
     {
         try

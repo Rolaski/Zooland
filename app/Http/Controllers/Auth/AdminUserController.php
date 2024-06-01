@@ -19,10 +19,9 @@ class AdminUserController extends Controller
         return view('admin.userCRUD', compact('users'));
     }
 
-    // Metoda do dodawania nowego użytkownika
+    // Method for create new user
     public function store(Request $request)
     {
-        // Walidacja danych przesłanych z formularza
         $request->validate([
             'name' => 'required|string|max:255',
             'surname' => 'required|string|max:255',
@@ -32,18 +31,17 @@ class AdminUserController extends Controller
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:1024',
         ]);
 
-        // Sprawdzenie, czy e-mail jest unikalny
+        // check if email is unique
         $validator = Validator::make($request->all(), [
             'email' => 'unique:users,email'
         ]);
 
-        // Jeśli e-mail nie jest unikalny, zwróć błąd
+        // email isnt unique
         if ($validator->fails()) {
             return back()->withErrors(['email' => 'Email already exists.'])->withInput();
         }
 
-
-        // Tworzenie nowego użytkownika na podstawie danych z formularza
+        // create new user from inputs
         $user = new User();
         $user->name = $request->name;
         $user->surname = $request->surname;
@@ -51,28 +49,22 @@ class AdminUserController extends Controller
         $user->password = bcrypt($request->password);
         $user->role = $request->role;
 
-        // Obsługa przesłanego avatara
+        // add new avatar
         if ($request->hasFile('avatar')) {
             $avatar = $request->file('avatar');
             $avatarName = Str::random(20) . '.' . $avatar->getClientOriginalExtension();
-            //$avatar->storeAs('public/img/avatars', $avatarName);
             $avatar->move(public_path('img/avatars'), $avatarName);
             $user->avatar = $avatarName;
         }
 
-        // Zapisanie nowego użytkownika do bazy danych
         $user->save();
 
-        // Przekierowanie po dodaniu użytkownika
         return redirect()->route('userCRUD')->with('success', 'User added successfully.');
     }
 
     public function update(Request $request)
     {
-    // Debugowanie - wyświetl dane żądania
     $user = User::findOrFail($request->user_id);
-
-    // Usunięcie pola 'role' z danych wejściowych
     $requestData = $request->except('role');
 
     $validatedData = Validator::make($requestData, [
@@ -105,15 +97,12 @@ class AdminUserController extends Controller
     }
 
     if ($request->hasFile('avatar')) {
-        // Usunięcie starego avatara
         if ($user->avatar) {
             $oldAvatarPath = public_path('img/avatars/' . $user->avatar);
             if (file_exists($oldAvatarPath)) {
                 unlink($oldAvatarPath);
             }
         }
-
-        // Zapisanie nowego avatara
         $avatar = $request->file('avatar');
         $avatarName = Str::random(20) . '.' . $avatar->getClientOriginalExtension();
         $avatar->move(public_path('img/avatars'), $avatarName);
@@ -142,7 +131,7 @@ class AdminUserController extends Controller
             if ($e->getCode() === '23000')
             {
                 return redirect()->route('userCRUD')->with('error', 'Cannot delete user with existing reservations.');
-            } 
+            }
             else
             {
                 return redirect()->route('userCRUD')->with('error', 'An unexpected error occurred.');

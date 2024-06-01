@@ -14,12 +14,10 @@
                     <form id="user-reservation-form" method="POST" action="{{ route('user-reservation.reserve') }}">
                         @csrf
                         @if ($errors->any())
-                            <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
-                                <ul class="list-disc pl-5">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
+                            <div class="p-4 mb-4 text-sm text-red-600 rounded-lg bg-lime-950 dark:bg-lime-950 dark:text-red-600 font-extrabold" role="alert">
+                                @foreach ($errors->all() as $error)
+                                    {{ $error }}<br>
+                                @endforeach
                             </div>
                         @endif
                         @if(session('status'))

@@ -84,7 +84,7 @@
                             @csrf
                             @method('PUT')
                             <div class="flex flex-col mb-4">
-                                <label for="ticket" class="text-lg font-bold mb-2">Ticket</label>
+                                <label for="ticket" class="text-lg font-bold mb-2 text-white">Ticket</label>
                                 <select name="ticket_id" id="ticket" class="border rounded-lg px-3 py-2" required>
                                     <option value="">-- Select Ticket --</option>
                                     @foreach($tickets as $ticket)
@@ -93,7 +93,7 @@
                                 </select>
                             </div>
                             <div class="flex flex-col mb-4">
-                                <label for="quantity" class="text-lg font-bold mb-2">Quantity</label>
+                                <label for="quantity" class="text-lg font-bold mb-2 text-white">Quantity</label>
                                 <input type="text" name="quantity" id="quantity" class="border rounded-lg px-3 py-2" value="{{ $user_ticket->quantity }}" required max="50">
                             </div>
                             <div class="flex justify-end">

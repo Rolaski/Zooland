@@ -18,7 +18,7 @@ class CalendarController extends Controller
                 function ($attribute, $value, $fail) {
                     $invalidDates = ['01-01', '11-01', '12-24', '12-25'];
 
-                    // Sprawdź, czy wybrana data znajduje się wśród niedozwolonych
+                    // Dates prohibited check
                     $selectedDate = date('m-d', strtotime($value));
                     if (in_array($selectedDate, $invalidDates)) {
                         $fail('The selected date is invalid!');
@@ -33,12 +33,22 @@ class CalendarController extends Controller
             return redirect()->route('home', '#section3')->withErrors($validator)->withInput();
         }
 
-        // Pobierz datę wizyty i ilości biletów
         $visitDate = $request->input('visit-date');
         $quantities = $request->input('quantity');
+        $allZero = true;
+        foreach ($quantities as $quantity)
+        {
+            if ($quantity > 0)
+            {
+                $allZero = false;
+                break;
+            }
+        }
+        if ($allZero) {
+            return redirect()->route('home', '#section3')->withErrors(['quantity' => 'You need to choose a ticket']);
+        }
         $tickets = Ticket::all();
 
-        // Przekaż dane do widoku reservation.submit
         return view('reservation.submit', [
             'visitDate' => $visitDate,
             'quantities' => $quantities,

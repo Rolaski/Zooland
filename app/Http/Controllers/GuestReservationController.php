@@ -11,7 +11,6 @@ class GuestReservationController extends Controller
 {
     public function submit(Request $request)
     {
-        // Walidacja danych wejściowych
         $validator = Validator::make($request->all(), [
             'reservation_date' => 'required|date',
             'quantity' => 'required|array',
@@ -25,13 +24,12 @@ class GuestReservationController extends Controller
             return redirect()->route('home', '#section3')->withErrors($validator)->withInput();
         }
 
-        // Pobierz dane wejściowe
         $visitDate = $request->input('reservation_date');
         $quantities = $request->input('quantity');
         $firstName = $request->input('guest_name');
         $lastName = $request->input('guest_surname');
         $email = $request->input('guest_email');
-        // Utwórz nową rezerwację
+
         $reservation = new Reservation();
         $reservation->guest_name = $firstName;
         $reservation->guest_surname = $lastName;
@@ -39,7 +37,6 @@ class GuestReservationController extends Controller
         $reservation->reservation_date = $visitDate;
         $reservation->save();
 
-        // Zapisz bilety do rezerwacji
         foreach ($quantities as $ticketId => $quantity) {
             if ($quantity > 0) {
                 TicketUser::create([
@@ -50,7 +47,6 @@ class GuestReservationController extends Controller
             }
         }
 
-        // Przekieruj z wiadomością sukcesu
         return redirect()->route('home', '#section3')->with('status', 'Reservation successfully made!');
     }
 }

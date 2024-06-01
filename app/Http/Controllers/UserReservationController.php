@@ -31,6 +31,20 @@ class UserReservationController extends Controller
 
     public function reserve(Request $request)
     {
+        $quantities = $request->input('quantity');
+        $allZero = true;
+        foreach ($quantities as $quantity)
+        {
+            if ($quantity > 0)
+            {
+                $allZero = false;
+                break;
+            }
+        }
+        if ($allZero) {
+            return redirect()->back()->withErrors(['quantity' => 'You need to choose a ticket']);
+        }
+
         $request->validate([
             'visit-date' => 'required|date',
             'quantity' => 'required|array',

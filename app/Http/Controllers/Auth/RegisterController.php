@@ -44,7 +44,7 @@ class RegisterController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-         // Handle file upload
+         //File upload
         if ($request->hasFile('avatar'))
         {
             $avatarName = Str::random(20) . '.' . $request->file('avatar')->getClientOriginalExtension();
